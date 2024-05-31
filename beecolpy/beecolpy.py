@@ -215,7 +215,8 @@ class abc:
                  min_max: str='min',
                  nan_protection: bool=True,
                  log_agents: bool=False,
-                 seed: int=None):
+                 seed: int=None,
+                 callback=None):
 
         self.boundaries = boundaries
         self.min_max_selector = min_max
@@ -224,6 +225,18 @@ class abc:
         self.log_agents = log_agents
         self.reset_agents = False
         self.seed = seed
+        self.callback = callback
+        self.have_callback = callback is not None
+        if (self.have_callback):
+            def function_wrapper(x):
+                result = function(x)
+                self.points.append(x)
+                self.fitness_values.append(result)
+                return result
+            
+            self.points = []
+            self.fitness_values = []
+            self.cost_function = function_wrapper
 
         self.max_iterations = int(max([iterations, 1]))
         if (iterations < 1):
@@ -302,6 +315,12 @@ class abc:
             #--> Scout bee phase <--
             #Generate up to one new food source that does not improve over scout_limit evaluation tries
             _ABC_engine(self).scout_bee_phase()
+
+            #Callback
+            if (self.have_callback):
+                self.callback(np.array(self.points), np.array(self.fitness_values))
+                self.points = []
+                self.fitness_values = []
 
             #Update iteration status
             self.iteration_status += 1
