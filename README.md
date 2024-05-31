@@ -1,3 +1,15 @@
+**BeeColPy extended**
+This repository is a fork of BeeColPy and introduces only one change, allowing to specify a callback function executed after each iteration of the algorithm.
+The callback function has signature:
+~~~~~~~~~~~~~~~~~
+callback(points, fitness_values)
+~~~~~~~~~~~~~~~~~
+Where:
+* points: np.array with shape N x D, with N number of individuals, D dimensionality of the fitness function.
+* fitness_values: np array with shape N; contains the computed fitness values of the points.
+
+This callback allows to monitor the fitness landscape exploration during the execution of the ABC algorithm and extract measures from it.
+
 **BeeColPy**
 ============
 
